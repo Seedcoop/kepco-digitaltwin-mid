@@ -263,9 +263,96 @@ body[data-stage="briefing"] .evidence-card{display:none}
  .replay-view .temperature-monitor-state{font-size:10px;padding:3px}
  .replay-view .temperature-monitor svg{min-height:0}
 }
+/* Program entry warning: keep the classroom scene behind a modal gate. */
+body[data-entry-locked]{overflow:hidden}
+#entryGate{width:min(620px,calc(100% - 32px));max-height:calc(100dvh - 32px);padding:0;border:1px solid #a6b8c7;border-radius:10px;background:#f7f9fc;box-shadow:0 24px 100px #0009;overflow:auto}
+#entryGate::backdrop{background:linear-gradient(135deg,#071727f5,#123653f5);backdrop-filter:blur(10px)}
+#entryGate .entry-titlebar{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid #c9d5df;background:#e9eff5;color:#24435c;font:15px "Malgun Gothic",sans-serif}
+#entryGate .entry-app-icon{display:grid;place-items:center;width:25px;height:25px;border-radius:5px;background:#164575;color:white;font:bold 17px "Malgun Gothic",sans-serif}
+#entryGate .entry-titlebar strong{font:600 15px "Malgun Gothic",sans-serif}
+#entryGate .entry-body{padding:34px 34px 28px}
+#entryGate .entry-message{display:flex;align-items:flex-start;gap:20px}
+#entryGate .entry-warning{width:48px;height:48px;flex-shrink:0}
+#entryGate h2{font-size:25px;line-height:1.6;letter-spacing:-.6px;margin:0;color:#183b57;overflow-wrap:anywhere}
+#entryGate .entry-code-row{display:flex;align-items:center;justify-content:center;gap:22px;margin-top:28px}
+#entryGate label{font:20px "Paperlogy 7 Bold","Malgun Gothic",sans-serif;color:#24435c}
+#entryGate input{width:176px;min-width:0;height:72px;border:2px solid #8faabd;border-radius:6px;background:white;color:#123958;font:38px/1 "Malgun Gothic",sans-serif;font-weight:700;letter-spacing:12px;text-indent:12px;text-align:center;caret-color:#087fca}
+#entryGate input:focus{border-color:#087fca;outline:3px solid #087fca25;outline-offset:2px}
+#entryGate input[aria-invalid="true"]{border-color:#ba3d35}
+#entryGate .entry-error{min-height:26px;margin-top:15px;color:#b3332b;font:16px/1.6 "Malgun Gothic",sans-serif;text-align:center}
+#entryGate .entry-actions{display:flex;justify-content:flex-end;padding:17px 24px;background:#edf2f7;border-top:1px solid #d4dfe7}
+#entryGate .entry-submit{min-width:125px;border:1px solid #126398;border-radius:5px;padding:11px 25px;background:#176fa8;color:white;font:18px "Paperlogy 7 Bold","Malgun Gothic",sans-serif;box-shadow:0 1px 2px #103b6820}
+#entryGate .entry-submit:hover{background:#105c90}
+@media(max-width:560px){#entryGate .entry-titlebar{padding:12px 16px}#entryGate .entry-body{padding:26px 20px 20px}#entryGate .entry-message{gap:13px}#entryGate .entry-warning{width:37px;height:37px}#entryGate h2{font-size:21px;line-height:1.65}#entryGate .entry-code-row{gap:17px;margin-top:24px}#entryGate label{font-size:18px}#entryGate input{width:144px;height:65px;font-size:32px}#entryGate .entry-error{font-size:14px}#entryGate .entry-actions{padding:15px 20px}}
+@media(max-height:500px){#entryGate .entry-titlebar{padding:10px 16px}#entryGate .entry-body{padding:18px 22px 14px}#entryGate .entry-warning{width:36px;height:36px}#entryGate h2{font-size:21px;line-height:1.5}#entryGate .entry-code-row{margin-top:16px}#entryGate input{height:58px;font-size:32px}#entryGate .entry-error{min-height:23px;margin-top:10px;font-size:14px}#entryGate .entry-actions{padding:12px 20px}#entryGate .entry-submit{padding:9px 25px}}
 </style>
 </head>
-<body>
+<body data-entry-locked>
+<dialog id="entryGate" aria-labelledby="entryMessage" aria-describedby="entryError">
+ <div class="entry-titlebar"><span class="entry-app-icon" aria-hidden="true">D</span><strong>디지털트윈 · 보안 확인</strong></div>
+ <form id="entryForm" novalidate>
+  <div class="entry-body">
+   <div class="entry-message"><svg class="entry-warning" viewBox="0 0 48 48" aria-hidden="true"><path d="M21.2 5.7a3.2 3.2 0 0 1 5.6 0l19.1 33a3.2 3.2 0 0 1-2.8 4.8H4.9a3.2 3.2 0 0 1-2.8-4.8z" fill="#f8cc45" stroke="#a87b14" stroke-width="1.5"/><path d="M24 16v13" stroke="#493d1d" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="36" r="2.3" fill="#493d1d"/></svg><h2 id="entryMessage">디지털트윈 입장을 위한 보안코드가 필요합니다.</h2></div>
+   <div class="entry-code-row"><label for="entryCode">보안코드</label><input id="entryCode" name="entryCode" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="entryError" autofocus></div>
+   <p class="entry-error" id="entryError" role="status" aria-live="polite"></p>
+  </div>
+  <div class="entry-actions"><button class="entry-submit" type="submit">확인</button></div>
+ </form>
+</dialog>
+<script>/* Classroom entry code, presented as an in-program access warning. */
+(() => {
+  'use strict';
+  const dialog = document.getElementById('entryGate');
+  const form = document.getElementById('entryForm');
+  const input = document.getElementById('entryCode');
+  const error = document.getElementById('entryError');
+  let composing = false;
+  let compositionEnter = false;
+
+  function finishInput() {
+    // Native maxlength can interrupt Korean IME. Limit only committed text.
+    input.value = Array.from(input.value).slice(0, 2).join('');
+    input.removeAttribute('aria-invalid');
+    error.textContent = '';
+  }
+
+  input.addEventListener('compositionstart', () => { composing = true; });
+  input.addEventListener('compositionend', () => {
+    composing = false;
+    finishInput();
+  });
+  input.addEventListener('input', event => {
+    if (!composing && !event.isComposing) finishInput();
+  });
+  input.addEventListener('keydown', event => {
+    if (event.key === 'Enter' && (composing || event.isComposing || event.keyCode === 229)) {
+      // Keep Enter available to commit the IME, without also submitting the code.
+      compositionEnter = true;
+      setTimeout(() => { compositionEnter = false; }, 0);
+    }
+  });
+  dialog.addEventListener('cancel', event => event.preventDefault());
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    if (composing || compositionEnter) return;
+    finishInput();
+    if (input.value !== '14') {
+      error.textContent = input.value.length < 2
+        ? '보안코드 두 글자를 입력해 주세요.'
+        : '보안코드가 일치하지 않습니다.';
+      input.setAttribute('aria-invalid', 'true');
+      input.focus();
+      input.select();
+      return;
+    }
+    input.value = '';
+    document.body.removeAttribute('data-entry-locked');
+    dialog.close();
+    document.getElementById('missionAction')?.focus();
+  });
+  dialog.showModal();
+})();
+</script>
 <header class="topbar">
  <div class="brand"><svg class="brand-symbol" aria-hidden="true" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 39V22l11-6v10l12-6v19M32 39V9h8v30M2 39h44"/><path d="M10 31h4m6 0h4M34 5h4"/></svg><div><small>한국전력기술 미래과학교실 · MISSION 03</small><h1>마지막 코드를 찾아라!</h1></div></div>
  <div class="top-actions"><div class="clock" id="clock"><div><small id="clockLabel">전력 복구 작전</small><strong id="timer">10:00</strong></div><button id="pauseButton" disabled aria-label="활동 일시정지">Ⅱ</button></div><button class="top-button" id="fullscreenButton">전체 화면</button><button class="top-button" id="resetButton">처음으로</button></div>
