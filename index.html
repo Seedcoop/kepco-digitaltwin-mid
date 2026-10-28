@@ -312,6 +312,47 @@ body[data-entry-locked]{overflow:hidden}
 @media(min-width:901px) and (max-width:1250px){.topbar{padding-inline:18px;gap:12px}.brand small,.brand-symbol{display:none}.brand h1{font-size:20px}.topbar .stepbar{gap:8px}.topbar .step-list{gap:8px}.topbar .step-list li{font-size:12px;gap:5px}.topbar .step-list li>span{width:20px;height:20px}.topbar .mission-badge{font-size:9px;padding:6px}.clock small{display:none}.clock{border:0;padding-right:0}.top-button{font-size:11px;padding:8px}.scene-header{grid-template-columns:145px minmax(0,1fr) auto;gap:7px;padding:8px 10px}.scene-heading small{display:none}.scene-heading h2{font-size:14px}.scene-heading .pill{font-size:9px}.scene-header .zone-nav{gap:4px}.scene-header .zone-nav button{font-size:11px;padding:8px 6px}.scene-top-actions .simple-button{font-size:10px;padding:7px}}
 @media(max-width:900px){.topbar{height:auto;min-height:77px;gap:10px;padding:12px 15px}.brand h1{font-size:20px}.topbar .stepbar{order:2;flex:1 0 100%;padding-block:6px}.topbar .mission-badge{display:block}.topbar .step-list{gap:15px}.top-actions{margin-left:auto}.scene-header{grid-template-columns:140px minmax(0,1fr);gap:6px;min-height:60px;padding:8px 10px;position:relative}.scene-heading{max-width:140px}.scene-heading small{display:none}.scene-heading h2{font-size:13px;white-space:normal}.scene-heading .pill{font-size:9px}.scene-header .zone-nav{grid-column:2;grid-row:1}.scene-header .zone-nav button{font-size:11px;padding:8px 7px}.scene-top-actions{position:absolute;right:10px;top:calc(100% + 10px);z-index:6}.scene-top-actions .simple-button{background:#fffffff0}.view-overlay{max-width:calc(100% - 110px)}.view-overlay>span{font-size:10px}.scene-card{height:565px;min-height:565px}}
 @media(max-width:560px){.topbar{gap:10px}.top-actions{width:100%}.clock small{display:block}.brand-symbol{width:30px;height:30px}.scene-header{grid-template-columns:110px minmax(0,1fr)}.scene-heading{max-width:110px}.scene-heading h2{font-size:12px}.scene-heading .pill{font-size:8px;padding:3px 4px}.scene-card{height:545px;min-height:545px}}
+/* The radio card follows its content instead of containing its own height. */
+.sidebar>.dialogue{
+  container-type:normal;container-name:none;
+  display:grid;grid-template-columns:84px minmax(0,1fr);
+  grid-template-areas:"avatar speaker" "message message";
+  align-items:start;align-content:start;gap:10px 12px;
+  flex:0 0 auto;height:auto;min-height:0;max-height:none;
+  margin-top:auto;padding:15px;border-radius:16px;
+}
+.sidebar>.dialogue:after{display:none}
+.sidebar .dialogue-copy{display:contents}
+.sidebar .operator{
+  grid-area:avatar;float:none;margin:0;width:84px;height:92px;
+  max-width:100%;max-height:none;object-fit:contain;
+}
+.sidebar .dialogue-copy strong{
+  grid-area:speaker;align-self:start;min-width:0;min-height:0;
+  margin:0;padding-top:5px;font-size:12px;line-height:1.5;
+  letter-spacing:0;overflow-wrap:anywhere;word-break:keep-all;
+}
+.sidebar .dialogue-copy p{
+  grid-area:message;clear:none;min-width:0;margin:0;
+  font-size:clamp(17px,1.4vw,21px);line-height:1.5;
+  overflow-wrap:anywhere;word-break:keep-all;
+}
+@media(min-width:901px){
+  .sidebar{overflow-y:auto;overflow-x:hidden;padding-bottom:6px;scrollbar-width:thin}
+  .sidebar>.mission-card,.sidebar>.evidence-card{flex-shrink:0}
+}
+@media(max-width:1100px) and (min-width:901px){
+  .sidebar>.dialogue{grid-template-columns:72px minmax(0,1fr);padding:12px;gap:9px 10px}
+  .sidebar .operator{width:72px;height:79px}
+  .sidebar .dialogue-copy strong{font-size:11px}
+}
+@media(max-width:900px){
+  .sidebar>.dialogue{margin-top:0;grid-template-columns:76px minmax(0,1fr);padding:15px;gap:10px 12px}
+  .sidebar .operator{width:76px;height:83px}
+  .sidebar .dialogue-copy strong{font-size:12px}
+  .sidebar .dialogue-copy p{font-size:18px}
+}
+
 </style>
 </head>
 <body data-entry-locked>
